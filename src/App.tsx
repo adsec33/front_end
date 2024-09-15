@@ -10,9 +10,10 @@ function App() {
 
     const [pass_fail, set_pass_fail] = useState(false)
 
+
     useEffect(() => {
         localStorage.getItem('token') ? set_pass_fail(true) : set_pass_fail(false)
-    })
+    }, [])
 
     return (
         <>

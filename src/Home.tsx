@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import axios from 'axios'
-import useSWR from 'swr'
+import useSWR, { useSWRConfig } from 'swr';
+import { cache } from 'swr/_internal';
+
+import { useDebounce } from 'use-debounce';
+import SearchPage from './Search';
 
 function HomePage() {
 
@@ -19,26 +21,19 @@ function HomePage() {
     const [postal, set_postal] = useState("");
     const [time_zone, set_time_zone] = useState("");
     const [readme, set_readme] = useState("");
+
     const [srch, set_srch] = useState("");
 
     const { data, error, isLoading, mutate } = useSWR([
         api_url,
         srch,
-    ], async ([url, srch]) => await axios.get(url + '/' + srch).then((res: any) => res))
+    ], async ([url, srch]) => await axios.get(url + '/' + srch).then((res: any) => res), {
+        refreshInterval: 60000, // Refetch every 60 seconds (60000 ms)
+    })
 
-    // const { data, isLoading, errorm, mutate } = useSWR(
-    //     [
-    //         api_url,
-    //         debouncedValueSearch === '' || debouncedValueSearch === null ? ' ' : debouncedValueSearch,
-    //         sortContent,
-    //         currentPG,
-    //         sortStr
-    //     ],
-    //     async ([url, debouncedValueSearch, sortContent, currentPG, sortStr]) =>
-    //         await axios.get(url + debouncedValueSearch + '/' + sortContent + '/' + sortStr + '?page=' + currentPG).then((res) => res)
-    // );
-
-
+    const handleClickSearch = (val: any) => {
+        set_srch(val)
+    }
     const handleSubmit = async (e: any) => {
         e.preventDefault();
 
@@ -79,7 +74,6 @@ function HomePage() {
                 return res
             })
             .catch((err) => {
-                console.log('+++ ', err.response.data.errors)
                 set_error_message(JSON.stringify(err?.response?.data?.errors))
                 setTimeout(() => {
                     set_error_message("")
@@ -119,10 +113,14 @@ function HomePage() {
         localStorage.removeItem('token')
         location.reload()
     }
+
+
     const handleSrch = (val: any) => {
-        val.preventDefault()
         set_srch(val.target.value)
+
     }
+
+
 
     if (isLoading || error) {
         return <h1>...loading</h1>
@@ -131,16 +129,15 @@ function HomePage() {
 
     return (
         <>
-
-
             <nav className="navbar navbar-expand-lg bg-body-tertiary mb-5">
                 <div className="container-fluid">
                     <h3>Geolocation Information</h3>
                     <h6 onClick={() => handleLogout()}>Logout</h6>
                 </div>
             </nav>
-            <form onSubmit={handleSubmit} id="itemForm" className="mb-4 col-12">
 
+
+            <form onSubmit={handleSubmit} id="itemForm" className="mb-4 col-12">
                 <div className="row">
                     <div className="col-6">
                         <div className="mb-2">
@@ -153,6 +150,7 @@ function HomePage() {
                             // required
                             />
                         </div>
+
                         <div className="mb-2">
                             <label htmlFor="post" className="mb-2">Hostname</label>
                             <input type="text"
@@ -249,13 +247,12 @@ function HomePage() {
                 <div className={error_message === "success" ? "alert alert-success" : error_message !== "" ? "alert alert-danger" : "alert alert-danger"} style={{ padding: 5, marginTop: 5 }} role="alert" hidden={error_message !== "" ? false : true}>
                     {error_message}
                 </div>
-                <button type="submit" className="btn btn-sm btn-outline-dark mt-1">Save</button>
+
+                <button className="btn btn-outline-dark btn-sm ml-2" type="submit">Save</button>
+
             </form>
 
-            <div className="col-3 mb-3 d-flex">
-                <input className="form-control mr-sm-2 flex-grow-1" type="search" value={srch} onChange={handleSrch} placeholder="Search" aria-label="Search" />
-                <button className="btn btn-outline-dark btn-sm ml-2" disabled type="submit">Search</button>
-            </div>
+            <SearchPage srch={srch} set_srch={set_srch} handleClickSearch={handleClickSearch} />
 
 
             <table id="itemsTable" className="table ">
