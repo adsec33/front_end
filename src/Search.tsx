@@ -61,7 +61,7 @@ function SearchPage({ srch, set_srch, handleClickSearch }: any) {
 
             <ul style={{ display: 'flex', listStyleType: 'none', padding: 0 }}>
                 {data?.data?.data?.map((item: any, ndx: number) => (
-                    <li key={ndx} style={{ cursor: "pointer" }} className='m-2' onClick={() => handleClickSearch(item.search)}>{item.search}</li>
+                    <li key={ndx} style={{ cursor: "pointer", border: "1px solid gray", padding: 2, borderRadius: 3 }} className='m-2' onClick={() => handleClickSearch(item.search)}>{item.search}</li>
                 ))}
             </ul>
         </>
