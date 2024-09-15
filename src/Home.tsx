@@ -128,17 +128,6 @@ function HomePage() {
         return <h1>...loading</h1>
     }
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchHistory, setSearchHistory] = useState([]);
-
-    const handleSearch = () => {
-        if (searchTerm.trim()) {
-            // Add search term to history
-            setSearchHistory([searchTerm, ...searchHistory]);
-            setSearchTerm('');
-        }
-    };
-
 
     return (
         <>
