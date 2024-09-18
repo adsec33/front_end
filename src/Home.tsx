@@ -22,6 +22,8 @@ function HomePage() {
     const [time_zone, set_time_zone] = useState("");
     const [readme, set_readme] = useState("");
 
+    const [loading, setLoading] = useState(true);
+
     const [srch, set_srch] = useState("");
 
     const { data, error, isLoading, mutate } = useSWR([
@@ -30,6 +32,7 @@ function HomePage() {
     ], async ([url, srch]) => await axios.get(url + '/' + srch).then((res: any) => res), {
         refreshInterval: 60000, // Refetch every 60 seconds (60000 ms)
     })
+
 
     const handleClickSearch = (val: any) => {
         set_srch(val)
@@ -56,7 +59,7 @@ function HomePage() {
             }
         })
             .then((res: any) => {
-                mutate()
+                // mutate()
                 set_ip("")
                 set_hostname("")
                 set_city("")
@@ -91,7 +94,7 @@ function HomePage() {
             }
         })
             .then((res: any) => {
-                mutate()
+                // mutate()
                 set_error_message(res?.data?.message)
                 setTimeout(() => {
                     set_error_message("")
@@ -122,10 +125,30 @@ function HomePage() {
 
 
 
-    if (isLoading || error) {
-        return <h1>...loading</h1>
-    }
-
+    // if (isLoading || error) {
+    //     return <h1>...loading</h1>
+    // }
+    //
+    // {wtf?.data?.data?.map((item: any, ndx: number) => (
+    //                        <tr key={ndx}>
+    //                            <td>{item.geo_location_id}</td>
+    //                            <td>{item.ip}</td>
+    //                            <td>{item.hostname}</td>
+    //                            <td>{item.city}</td>
+    //                            <td>{item.region}</td>
+    //                            <td>{item.country}</td>
+    //                            <td>{item.loc}</td>
+    //                            <td>{item.org}</td>
+    //                            <td>{item.postal}</td>
+    //                            <td>{item.time_zone}</td>
+    //                            <td>{item.readme}</td>
+    //
+    //                            <td>
+    //                                {/* <button className='btn btn-sm btn-outline-dark m-1' onClick={() => false}>Edit</button> */}
+    //                                <button className='btn btn-sm btn-outline-dark text-danger' onClick={() => handleDelete(item.geo_location_id)}>Delete</button>
+    //                            </td>
+    //                        </tr>
+    //                    ))}
 
     return (
         <>
@@ -293,6 +316,8 @@ function HomePage() {
                             </td>
                         </tr>
                     ))}
+
+
                 </tbody>
             </table>
 
